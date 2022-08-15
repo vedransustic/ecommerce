@@ -7,10 +7,18 @@ import {
 } from 'react-icons/ai';
 import { client, urlFor } from '../../lib/client';
 import { Product } from '../../components';
+import { useStateContext } from '../../context/StateContext';
 
 const ProductDetails = ({ product, productsData }) => {
 	const { image, name, details, price } = product;
 	const [index, setIndex] = useState(0);
+	const { qty, incQty, decQty, onAdd, setShowCart } = useStateContext();
+
+	const handleBuyNow = () => {
+		onAdd(product, qty);
+
+		setShowCart(true);
+	};
 
 	return (
 		<div>
@@ -25,6 +33,7 @@ const ProductDetails = ({ product, productsData }) => {
 					<div className='small-images-container'>
 						{image?.map((item, idx) => (
 							<img
+								key={idx}
 								src={`${urlFor(item)}`}
 								className={
 									idx === index
@@ -54,13 +63,13 @@ const ProductDetails = ({ product, productsData }) => {
 					<div className='quantity'>
 						<h3>Quantity</h3>
 						<p className='quantity-desc'>
-							<span className='minus'>
+							<span className='minus' onClick={decQty}>
 								<AiOutlineMinus />
 							</span>
 							<span className='num' onClick={() => {}}>
-								0
+								{qty}
 							</span>
-							<span className='plus'>
+							<span className='plus' onClick={incQty}>
 								<AiOutlinePlus />
 							</span>
 						</p>
@@ -69,13 +78,13 @@ const ProductDetails = ({ product, productsData }) => {
 						<button
 							type='button'
 							className='add-to-cart'
-							onClick={() => {}}>
+							onClick={() => onAdd(product, qty)}>
 							Add to Cart
 						</button>
 						<button
 							type='button'
 							className='buy-now'
-							onClick={() => {}}>
+							onClick={handleBuyNow}>
 							Buy Now
 						</button>
 					</div>
